@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>我的行程 — 工作與生活</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="我的行程">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f4ef">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f4ef;
+    --card: #ffffff;
+    --ink: #2b2a28;
+    --ink-soft: #6b6762;
+    --line: #e7e2d9;
+    --ring: #2b2a28;
+
+    --work-1: #3b6e8f; /* 國小備課 */
+    --work-2: #2e7d74; /* 國中備課 */
+    --work-3: #4a5c92; /* 高中備課 */
+    --work-4: #6b5b95; /* 作文 */
+    --work-5: #4f7ca3; /* 文本閱讀 */
+    --work-6: #35707a; /* 考卷製作 */
+
+    --life-1: #b5704a; /* 上課安排 */
+    --life-2: #c97b3d; /* 運動 */
+    --life-3: #b68a2e; /* 交流進修 */
+    --life-4: #b5556b; /* 休閒 */
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", -apple-system, sans-serif;
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  header.top h1 {
+    font-family: "Noto Serif TC", serif;
+    font-weight: 700;
+    font-size: 26px;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  header.top p {
+    margin: 4px 0 0;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 760px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* ---- Sidebar ---- */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .group {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
+  }
+
+  .group h2 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    letter-spacing: 1px;
+  }
+
+  .tag-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    margin-bottom: 2px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .tag-btn:hover { background: #f3f0ea; }
+
+  .tag-btn.active {
+    background: #fbf9f5;
+    border-color: var(--ink);
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+  }
+
+  .hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    padding: 4px 2px 0;
+  }
+
+  .clear-btn {
+    margin-top: 4px;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    border-radius: 10px;
+    padding: 8px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .clear-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+  /* ---- Calendar ---- */
+  .calendar-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+  }
+
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .cal-nav .month-label {
+    font-family: "Noto Serif TC", serif;
+    font-size: 19px;
+    font-weight: 600;
+  }
+
+  .nav-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .nav-group { display: flex; gap: 6px; align-items: center; }
+
+  .today-btn {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .today-btn:hover { color: var(--ink); border-color: var(--ink-soft); }
+
+  .grid-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .grid-week span {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding-bottom: 4px;
+  }
+
+  .grid-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .day {
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: #fff;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .day:hover { border-color: var(--ink-soft); }
+  .day.empty { visibility: hidden; cursor: default; }
+
+  .day .num {
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .day.is-today .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .day .dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .day .dots .dot { width: 7px; height: 7px; }
+
+  footer.note {
+    margin-top: 22px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="top">
+    <div>
+      <h1>我的行程</h1>
+      <p>工作與生活的平衡表 — 先點左邊的項目，再點日期上色</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="group">
+        <h2>工作</h2>
+        <div id="work-tags"></div>
+      </div>
+      <div class="group">
+        <h2>生活</h2>
+        <div id="life-tags"></div>
+      </div>
+      <button class="clear-btn" id="clear-day">清除選取狀態</button>
+      <p class="hint">點一個項目把它「選取」，再點日期把這個項目蓋到那一天上；同一個項目再點一次日期可以取消。一天可以疊加多個項目。</p>
+    </aside>
+
+    <main class="calendar-card">
+      <div class="cal-nav">
+        <div class="nav-group">
+          <button class="nav-btn" id="prev-month">‹</button>
+          <span class="month-label" id="month-label"></span>
+          <button class="nav-btn" id="next-month">›</button>
+        </div>
+        <button class="today-btn" id="today-btn">回到今天</button>
+      </div>
+      <div class="grid-week">
+        <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+      </div>
+      <div class="grid-days" id="grid-days"></div>
+    </main>
+  </div>
+
+  <footer class="note">資料存在這台裝置的瀏覽器裡（localStorage），目前是單機版架構，之後可以再加上雲端同步。</footer>
+</div>
+
+<script>
+  const TAGS = {
+    work: [
+      { id: "w1", label: "國小備課", color: "var(--work-1)" },
+      { id: "w2", label: "國中備課", color: "var(--work-2)" },
+      { id: "w3", label: "高中備課", color: "var(--work-3)" },
+      { id: "w4", label: "作文",    color: "var(--work-4)" },
+      { id: "w5", label: "文本閱讀", color: "var(--work-5)" },
+      { id: "w6", label: "考卷製作", color: "var(--work-6)" },
+    ],
+    life: [
+      { id: "l1", label: "上課安排",         color: "var(--life-1)" },
+      { id: "l2", label: "運動",            color: "var(--life-2)" },
+      { id: "l3", label: "交流進修",         color: "var(--life-3)" },
+      { id: "l4", label: "休閒（Disney+/Netflix）", color: "var(--life-4)" },
+    ],
+  };
+
+  const ALL_TAGS = [...TAGS.work, ...TAGS.life];
+  const STORAGE_KEY = "candice_schedule_v1";
+
+  let activeTagId = null;
+  let viewDate = new Date();
+  viewDate.setDate(1);
+
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function renderTagButtons() {
+    const workEl = document.getElementById("work-tags");
+    const lifeEl = document.getElementById("life-tags");
+    workEl.innerHTML = "";
+    lifeEl.innerHTML = "";
+
+    function makeBtn(tag) {
+      const btn = document.createElement("button");
+      btn.className = "tag-btn" + (activeTagId === tag.id ? " active" : "");
+      btn.innerHTML = `<span class="dot" style="background:${tag.color}"></span>${tag.label}`;
+      btn.onclick = () => {
+        activeTagId = activeTagId === tag.id ? null : tag.id;
+        renderTagButtons();
+      };
+      return btn;
+    }
+
+    TAGS.work.forEach(t => workEl.appendChild(makeBtn(t)));
+    TAGS.life.forEach(t => lifeEl.appendChild(makeBtn(t)));
+  }
+
+  function dateKey(y, m, d) {
+    return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+  }
+
+  function renderCalendar() {
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+    document.getElementById("month-label").textContent = `${y} 年 ${m + 1} 月`;
+
+    const firstWeekday = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const data = loadData();
+
+    const gridEl = document.getElementById("grid-days");
+    gridEl.innerHTML = "";
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const empty = document.createElement("div");
+      empty.className = "day empty";
+      gridEl.appendChild(empty);
+    }
+
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === y && today.getMonth() === m;
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = dateKey(y, m, d);
+      const cell = document.createElement("div");
+      cell.className = "day" + (isCurrentMonth && today.getDate() === d ? " is-today" : "");
+
+      const num = document.createElement("div");
+      num.className = "num";
+      num.textContent = d;
+      cell.appendChild(num);
+
+      const dotsWrap = document.createElement("div");
+      dotsWrap.className = "dots";
+      (data[key] || []).forEach(tagId => {
+        const tag = ALL_TAGS.find(t => t.id === tagId);
+        if (!tag) return;
+        const dot = document.createElement("span");
+        dot.className = "dot";
+        dot.style.background = tag.color;
+        dot.title = tag.label;
+        dotsWrap.appendChild(dot);
+      });
+      cell.appendChild(dotsWrap);
+
+      cell.onclick = () => {
+        if (!activeTagId) return;
+        const d2 = loadData();
+        const list = d2[key] || [];
+        const idx = list.indexOf(activeTagId);
+        if (idx >= 0) list.splice(idx, 1);
+        else list.push(activeTagId);
+        d2[key] = list;
+        saveData(d2);
+        renderCalendar();
+      };
+
+      gridEl.appendChild(cell);
+    }
+  }
+
+  document.getElementById("prev-month").onclick = () => {
+    viewDate.setMonth(viewDate.getMonth() - 1);
+    renderCalendar();
+  };
+  document.getElementById("next-month").onclick = () => {
+    viewDate.setMonth(viewDate.getMonth() + 1);
+    renderCalendar();
+  };
+  document.getElementById("today-btn").onclick = () => {
+    viewDate = new Date();
+    viewDate.setDate(1);
+    renderCalendar();
+  };
+  document.getElementById("clear-day").onclick = () => {
+    activeTagId = null;
+    renderTagButtons();
+  };
+
+  renderTagButtons();
+  renderCalendar();
+</script>
+
+</body>
+</html>
